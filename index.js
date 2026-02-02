@@ -244,7 +244,7 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`*${news.title}*\n\`${news.brief}\`\n_${news.time}_\n👇 点击下方按钮查看详情`;
+			const caption=`*${news.title}*\n\`${news.brief}\`\n_${news.time}_`;
 			const options={
 				caption,parse_mode:'MarkdownV2',
 				reply_markup:{
