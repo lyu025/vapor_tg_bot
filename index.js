@@ -69,7 +69,7 @@ class NF{
 				if(!id||!title||(id in im))return
 				o.push({id,title,time,brief,info:'',ts:new Date().toISOString()});
 			});
-			return list;
+			return o;
 		}catch(e){
 			console.error('❌ 抓取失败:',e.message);
 			return[];
