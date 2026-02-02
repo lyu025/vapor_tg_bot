@@ -3,13 +3,13 @@ require('dotenv').config();
 const TgBot=require('node-telegram-bot-api');
 const cheerio=require('cheerio');
 const cron=require('node-cron');
+const fs=require('fs').promises;
 const axios=require('axios');
 const path=require('path');
-const fs=require('fs');
 
 //配置
 const CC={
-	CR_TIME:process.env.CR_TIME||'*****',
+	CR_TIME:process.env.CR_TIME||'* * * * *',
 	TG_TOKEN:process.env.TG_TOKEN,
 	PORT:process.env.PORT||3000
 };
@@ -65,7 +65,7 @@ class NF{
 				const id=$e.attr('id').split('_').pop();
 				const time=$e.find('.time').text().trim();
 				const title=$e.find('.c h3').html().split('<').shift().trim();
-				const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：)*/,'');
+				const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：) */,'');
 				if(!id||!title||(id in im))return
 				o.push({id,title,time,brief,info:'',ts:new Date().toISOString()});
 			});
@@ -104,7 +104,7 @@ class NF{
 			return o.join('');
 		}catch(e){
 			console.log(`⚠️	获取详情失败:${e.message}`);
-			return'';
+			return '';
 		}
 	}
 	sleep(ms){
@@ -116,7 +116,16 @@ class NF{
 class Bot{
 	constructor(){
 		if(!CC.TG_TOKEN)throw new Error('请在.env文件中设置TG_TOKEN');
-		this.bot=new TgBot(CC.TG_TOKEN,{polling:true,filepath:false});
+		this.bot=new TgBot(CC.TG_TOKEN,{
+			polling:{
+				autoStart:true,
+				interval:1000, // 增加间隔
+				params:{
+					timeout:30,
+					offset:-1 // 关键：从最新消息开始
+				}
+			}
+		});
 		this.sm=new SM();
 		this.nf=new NF();
 		this.me=null;
@@ -133,6 +142,14 @@ class Bot{
 		this.wserver();
 	}
 	listen(){
+		//错误处理
+		this.bot.on('polling_error',e=>{
+			if(e.message.includes('409')){
+				console.log('检测到冲突，等待后继续...');
+				this.bot.stopPolling();
+				setTimeout(()=>this.bot.startPolling(),5000);
+			}
+		});
 		//机器人加入群组
 		this.bot.on('new_chat_members',async(msg)=>{
 			const ms=msg.new_chat_members;
@@ -145,14 +162,12 @@ class Bot{
 			const me=await this._me();
 			if(msg.left_chat_member.id===me.id)await this.g_out(msg);
 		});
-		//回调查询处理（折叠详情功能核心）
+		//回调查询处理
 		this.bot.on('callback_query',async q=>await this.cq(q));
 		//命令处理
-		this.bot.onText(/\/start/,(msg)=>this.todo(msg,'start'));
 		this.bot.onText(/\/news/,(msg)=>this.todo(msg,'news'));
+		this.bot.onText(/\/start/,(msg)=>this.todo(msg,'start'));
 		this.bot.onText(/\/help/,(msg)=>this.todo(msg,'help'));
-		//错误处理
-		this.bot.on('polling_error',e=>console.error('❌ 轮询错误:',e.message));
 	}
 	async g_join(msg){
 		const id=msg.chat.id,type=msg.chat.type;
@@ -169,7 +184,7 @@ class Bot{
 		this.sm.g_del(msg.chat.id);
 	}
 	async cq(_){
-		const{id,data}=_;
+		const {id,data}=_;
 		try{
 			if(data.startsWith('expand_'))await this.expand(_);
 			//确认回调已处理
@@ -182,7 +197,7 @@ class Bot{
 		}
 	}
 	async expand(_){
-		const{data,message}=_;
+		const {data,message}=_;
 		const id=data.replace('expand_','');
 		const cid=message.chat.id,mid=message.message_id;
 		
@@ -225,7 +240,7 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`# ${news.title}\n\n>${news.brief}\n\n<small>${news.time}</small>\n\n👇 点击下方按钮查看详情`;
+			const caption=`# ${news.title}\n\n> ${news.brief}\n\n<small>${news.time}</small>\n\n👇 点击下方按钮查看详情`;
 			const options={
 				caption,parse_mode:'Markdown',
 				reply_markup:{
@@ -317,41 +332,9 @@ class Bot{
 	}
 }
 
-class FileLock{
-	constructor(name='bot.lock'){
-		this.lock=path.join(__dirname,name);
-	}
-	acquire(){
-		if(fs.existsSync(this.lock)){
-			try{
-				const data=fs.readFileSync(this.lock,'utf8');
-				const{pid}=JSON.parse(data);
-				//检查进程是否存活
-				try{
-					process.kill(pid,0);
-					return false;//进程存在，获取锁失败
-				}catch{}
-			}catch{}
-		}
-		fs.writeFileSync(this.lock,JSON.stringify({
-			pid:process.pid,
-			time:Date.now()
-		}));
-		const cleanup=()=>fs.existsSync(this.lock)&&fs.unlinkSync(this.lock);
-		process.on('exit',cleanup);
-		process.on('SIGINT',cleanup);
-		return true;
-	}
-}
-
 //启动程序
 async function main(){
 	try{
-		const lock=new FileLock();
-		if(!lock.acquire()){
-			console.log('已有实例在运行');
-			process.exit(1);
-		}
 		const bot=new Bot();
 		await bot.start();
 	}catch(e){
