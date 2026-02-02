@@ -3,9 +3,9 @@ require('dotenv').config();
 const TgBot=require('node-telegram-bot-api');
 const cheerio=require('cheerio');
 const cron=require('node-cron');
-const fs=require('fs').promises;
 const axios=require('axios');
 const path=require('path');
+const fs=require('fs');
 
 //配置
 const CC={
