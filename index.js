@@ -66,8 +66,12 @@ class NF{
 				const time=$e.find('.time').text().trim();
 				const title=$e.find('.c h3').html().split('<').shift().trim();
 				const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：) */,'');
+				const imgs=[];
+				$e.find('.piclist img').each((j,ii)=>{
+					imgs.push($(ii).attr('src'));
+				});
 				if(!id||!title||(id in im))return
-				o.push({id,title,time,brief,info:'',ts:new Date().toISOString()});
+				o.push({id,title,time,brief,imgs,info:'',ts:new Date().toISOString()});
 			});
 			return o;
 		}catch(e){
@@ -240,17 +244,22 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`*${news.title}*\n\n\`${news.brief}\`\n\n_${news.time}_\n\n👇 点击下方按钮查看详情`;
+			const caption=`*${news.title}*\n\n\`\`\`\n${news.brief}\n\`\`\`\n\n \n\n_${news.time}_\n\n👇 点击下方按钮查看详情`;
 			const options={
-				caption,parse_mode:'Markdown',
+				caption,parse_mode:'MarkdownV2',
 				reply_markup:{
 					inline_keyboard:[
 						[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
 					]
 				}
 			};
-			await this.bot.sendMessage(id,caption,{
+			if(news.imgs.length<1)await this.bot.sendMessage(id,caption,{
 				parse_mode:'Markdown',
+				reply_markup:options.reply_markup,
+				disable_web_page_preview:true
+			});
+			else await this.bot.sendPhoto(id,news.imgs[0],{
+				caption,parse_mode:'Markdown',
 				reply_markup:options.reply_markup,
 				disable_web_page_preview:true
 			});
