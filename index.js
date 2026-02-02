@@ -176,7 +176,7 @@ class Bot{
 			await this.bot.answerCallbackQuery(id);
 		}catch(e){
 			await this.bot.answerCallbackQuery(id,{
-				text:`操作失败: ${e.message}，请重试`,
+				text:e.message,
 				show_alert:false
 			});
 		}
@@ -186,8 +186,7 @@ class Bot{
 		const id=data.replace('expand_','');
 		const cid=message.chat.id,mid=message.message_id;
 		
-		const detail="...."
-		//this.sm.getNewsDetail(newsId);
+		const detail="....";
 		//创建展开后的消息
 		const caption=`📰*新闻详情*\n\n${detail}`;
 		//更新消息
@@ -257,8 +256,7 @@ class Bot{
 		}
 		try{
 			//获取新闻
-			let s=await this.nf.list(),im=this.sm.n_get('_')||{};
-			s=s.filter(_=>!(news.id in im)).slice(0,30);
+			const im=this.sm.n_get('_')||{},s=await this.nf.list(im).slice(0,10);
 			if(s.length===0){
 				this._=false;
 				return;
