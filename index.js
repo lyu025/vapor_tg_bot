@@ -239,7 +239,7 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`*${news.title}*\n\n> ${news.brief}\n\n_发布时间: ${news.time}_\n\n`;
+			const caption=`*${news.title}*\n\n\`${news.brief}\`\n\n_发布时间: ${news.time}_\n\n`;
 			const reply_markup={
 				inline_keyboard:[
 					[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
