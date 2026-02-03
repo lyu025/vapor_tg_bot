@@ -146,7 +146,7 @@ class Bot{
 			if(e.message.includes('409')){
 				console.log('检测到冲突，等待后继续...');
 				this.bot.stopPolling();
-				setTimeout(()=>this.bot.startPolling(),5000);
+				setTimeout(()=>this.bot.startPolling(),3000);
 			}
 		});
 		//机器人加入群组
@@ -165,7 +165,6 @@ class Bot{
 		this.bot.on('callback_query',async q=>await this.cq(q));
 		//命令处理
 		this.bot.onText(/\/news/,(msg)=>this.todo(msg,'news'));
-		this.bot.onText(/\/start/,(msg)=>this.todo(msg,'start'));
 		this.bot.onText(/\/help/,(msg)=>this.todo(msg,'help'));
 	}
 	async g_join(msg){
@@ -200,7 +199,7 @@ class Bot{
 		const id=data.replace('expand_',''),n=this.sm.n_get(id);
 		const cid=message.chat.id,mid=message.message_id;
 		const detail=await this.nf.info(id);
-		const caption=`*${news.title}*\n\n_发布时间: ${news.time}_\n\n`;
+		const caption=`*${n.title}*\n\n_发布时间: ${n.time}_\n\n`;
 		await this.bot['editMessage'+(message.text?'Text':'Caption')](caption+detail,{
 			chat_id:cid,message_id:mid,parse_mode:'Markdown'
 		});
@@ -208,8 +207,6 @@ class Bot{
 	async todo(msg,command){
 		const id=msg.chat.id,type=msg.chat.type;
 		switch(command){
-			case'start':
-				break;
 			case'news':
 				await this.onews(id);
 				break;
@@ -294,7 +291,7 @@ class Bot{
 	//启动定时任务
 	crontab(){
 		cron.schedule(CC.CR_TIME,()=>this.bnews(),{scheduled:true,timezone:'Asia/Shanghai'});
-		setTimeout(()=>this.bnews(),10000);
+		setTimeout(()=>this.bnews(),5000);
 	}
 	//启动Web服务器
 	wserver(){
