@@ -244,23 +244,18 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`*${news.title}*\n\`${news.brief}\`\n_${news.time}_`;
-			const options={
-				caption,parse_mode:'MarkdownV2',
-				reply_markup:{
-					inline_keyboard:[
-						[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
-					]
-				}
+			const caption=`<strong>${news.title}</strong><br><em>${news.time}</em><br><small>${news.brief}</small>`;
+			const reply_markup={
+				inline_keyboard:[
+					[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
+				]
 			};
-			if(news.imgs.length<1)await this.bot.sendMessage(id,caption,{
-				parse_mode:'Markdown',
-				reply_markup:options.reply_markup,
+			if(!news.img)await this.bot.sendMessage(id,caption,{
+				parse_mode:'HTML',reply_markup,
 				disable_web_page_preview:true
 			});
-			else await this.bot.sendPhoto(id,news.imgs[0],{
-				caption,parse_mode:'Markdown',
-				reply_markup:options.reply_markup,
+			else await this.bot.sendPhoto(id,news.img,{
+				caption,parse_mode:'HTML',reply_markup,
 				disable_web_page_preview:true
 			});
 			return true;
