@@ -92,8 +92,8 @@ BT.on('callback_query',async q=>{
 		if(data.startsWith('expand_')){
 			const id=data.replace('expand_','');
 			const n=NM[id],info=await n_info(id);
-			const id=m.chat.id,reply_to_message_id=m.message_id;
-			await BT.sendMessage(id,info,{
+			const cid=m.chat.id,reply_to_message_id=m.message_id;
+			await BT.sendMessage(cid,info,{
 				reply_to_message_id,parse_mode:'Markdown'
 			});
 		}
