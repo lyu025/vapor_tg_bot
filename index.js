@@ -84,17 +84,15 @@ class NF{
 				nodes.each((i,node)=>{
 					if(node.type==='text'){
 						const text=$(node).text().trim();
-						if(text)o+=(o&&!o.endsWith(' ')?' ':'')+text;
+						if(text)o+='\n  '+text;
 					}else if(node.type==='tag'){
 						const el=$(node);
-						if(el.is('br')){
-							if(o&&!o.endsWith('\n\n'))o+='\n';
-						}else if(el.is('strong')){
-							o+=`**${el.text().trim()}**`;
+						if(el.is('br')){}else if(el.is('strong')){
+							o+=`\n**${el.text().trim()}**`;
 						}else if(el.is('img')){
 							const src='https://www.flw.ph/forum.php'+el.attr('src').replace('forum.php','');
 							const alt=el.attr('alt')||'';
-							if(src)o+=(o&&!o.endsWith('\n\n')?'\n\n':'')+`![${alt}](${src})\n\n`;
+							if(src)o+=`\n![${alt}](${src})`;
 						}else{
 							walk(el.contents());
 						}
@@ -102,9 +100,6 @@ class NF{
 				});
 			};
 			walk($('.message').contents());
-			o=o.replace(/\s+/g,' ');
-			o=o.replace(/([。！？；.!?])\s*/g,'$1\n\n');
-			o=o.replace(/\n\s*\n\s*\n+/g,'\n\n');
 			return o.trim();
 		}catch(e){
 			console.log(`⚠️	获取详情失败:${e.message}`);
