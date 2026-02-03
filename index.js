@@ -83,24 +83,24 @@ class NF{
 			$o.each(v=>{
 				if(v.type=='text'){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`<i>${o}</i>`);
+					if(x)o.push(`\n\n<i>${o}</i>`);
 					return;
 				}
 				if(v.name=='br')return;
 				if(v.name=='strong'||v.name.startsWith('h')){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`<b><i>${o}</i></b>`);
+					if(x)o.push(`\n\n<b><i>${o}</i></b>`);
 					return;
 				}
 				const h=$(v).html().trim();
 				if(!h||h=='<br>')return;
 				const img=$(v).find('img'),text=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
 				if(img){
-					o.push(`<img src='https://www.flw.ph/forum.php${img.attr('src').replace('forum.php','')}'/>${text?`<p>${text}</p>`:''}`)
+					o.push(`\n\n<img src='https://www.flw.ph/forum.php${img.attr('src').replace('forum.php','')}'/>${text?`\n<i>${text}</i>`:''}`)
 					return;
 				}
 				const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-				if(x)o.push(`<i>${o}</i>`);
+				if(x)o.push(`\n\n<i>${o}</i>`);
 			});
 			return o.join('');
 		}catch(e){
@@ -239,7 +239,7 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`<b>${news.title}</b><em>${news.time}</em><code>${news.brief}</code><u> </u>`;
+			const caption=`<b>${news.title}</b>\n\n<code>${news.brief}</code>\n\n<em>发布时间: ${news.time}</em>\n\n`;
 			const reply_markup={
 				inline_keyboard:[
 					[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
