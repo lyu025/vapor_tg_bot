@@ -205,7 +205,7 @@ class Bot{
 		const id=data.replace('expand_','');
 		const cid=message.chat.id,mid=message.message_id;
 		const detail=await this.nf.info(id);
-		const caption=message.caption+`<br><br>${detail}`;
+		const caption=message.caption+detail;
 		//更新消息
 		await this.bot.editMessageCaption(caption,{
 			chat_id:cid,message_id:mid,parse_mode:'HTML'
@@ -242,7 +242,7 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`<strong>${news.title}</strong><br><em>${news.time}</em><br><small>${news.brief}</small>`;
+			const caption=`<strong>${news.title}</strong><em>${news.time}</em><small>${news.brief}</small>`;
 			const reply_markup={
 				inline_keyboard:[
 					[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
