@@ -92,10 +92,9 @@ BT.on('callback_query',async q=>{
 		if(data.startsWith('expand_')){
 			const id=data.replace('expand_','');
 			const n=NM[id],info=await n_info(id);
-			const chat_id=m.chat.id,message_id=m.message_id;
-			const caption=`*${n.title}*\n\n_发布时间: ${n.time}_\n\n`;
-			await BT['editMessage'+(m.text?'Text':'Caption')](caption+info,{
-				chat_id,message_id,parse_mode:'Markdown'
+			const id=m.chat.id,reply_to_message_id=m.message_id;
+			await BT.sendMessage(id,info,{
+				reply_to_message_id,parse_mode:'Markdown'
 			});
 		}
 		await BT.answerCallbackQuery(id);
