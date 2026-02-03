@@ -23,7 +23,7 @@ const n_list=async()=>{
 		const title=$e.find('.c h3').html().split('<').shift().trim();
 		const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：) */,'');
 		const ii=$e.find('.piclist img'),img=ii.length>0?ii.attr('src'):null;
-		if(!id||!title||(id in NM))return;
+		if(!id||!title)return;
 		NM[id]={id,title,time,brief,img,info:'',ts:new Date().toISOString()}
 		o.push(NM[id]);
 	});
@@ -131,7 +131,7 @@ const send=async(id,n)=>{
 //手动获取最新资讯
 BT.onText(/\/news/,async m=>{
 	const id=m.chat.id;
-	const s=(await n_list()).slice(0,1);
+	const s=(await n_list()).slice(0,5);
 	for(const n of s)await send(id,n);
 });
 
@@ -142,7 +142,7 @@ const bsend=async()=>{
 	if(wait)return;
 	if(Object.keys(GM).length==0)return;
 	try{
-		const s=await n_list().slice(0,10);
+		const s=await n_list().filter(_=>!NM[_.id]).slice(0,10);
 		if(s.length===0)return;
 		wait=true;
 		for(const g of GM){
