@@ -79,8 +79,8 @@ class NF{
 	async info(id){
 		try{
 			const x=await axios.get(`https://www.flw.ph/forum.php?mod=viewthread&tid=${id}&mobile=2`,{timeout:10000});
-			const $=cheerio.load(x.data),$o=$('.main .message').contents(),o=[];
-			$o.each(v=>{
+			const $=cheerio.load(x.data),o=[];
+			$('.main .message').each((i,v)=>{
 				if(v.type=='text'){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
 					if(x)o.push(`\n\n<i>${o}</i>`);
@@ -218,7 +218,7 @@ class Bot{
 				break;
 			case'help':
 				await this.bot.sendMessage(id,
-					`📖*可用命令:*\n\n`+
+					`📖*可用命令:*\n`+
 					`/start-开始使用\n`+
 					`/news-手动获取最新新闻\n`,
 					{
