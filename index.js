@@ -232,7 +232,7 @@ class Bot{
 	}
 	async onews(id){
 		try{
-			const s=(await this.nf.list()).slice(0,1);
+			const s=(await this.nf.list()).slice(0,6);
 			for(const n of s)await this.send(id,n);
 		}catch(e){
 			console.error('❌ 发送新闻失败:',e);
