@@ -83,24 +83,24 @@ class NF{
 			$('.main .message').each((i,v)=>{
 				if(v.type=='text'){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`\n\n<i>${o}</i>`);
+					if(x)o.push(`\n> ${o}`);
 					return;
 				}
 				if(v.name=='br')return;
 				if(v.name=='strong'||v.name.startsWith('h')){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`\n\n<b><i>${o}</i></b>`);
+					if(x)o.push(`\n*${o}*`);
 					return;
 				}
 				const h=$(v).html().trim();
 				if(!h||h=='<br>')return;
 				const img=$(v).find('img'),text=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
 				if(img){
-					o.push(`\n\n<img src='https://www.flw.ph/forum.php${img.attr('src').replace('forum.php','')}'/>${text?`\n<i>${text}</i>`:''}`)
+					o.push(`\n[${text||'...'}](https://www.flw.ph/forum.php${img.attr('src').replace('forum.php','')})`)
 					return;
 				}
 				const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-				if(x)o.push(`\n\n<i>${o}</i>`);
+				if(x)o.push(`\n> ${o}`);
 			});
 			return o.join('');
 		}catch(e){
@@ -205,7 +205,7 @@ class Bot{
 		const caption=message.caption+detail;
 		//更新消息
 		await this.bot.editMessageCaption(caption,{
-			chat_id:cid,message_id:mid,parse_mode:'HTML'
+			chat_id:cid,message_id:mid,parse_mode:'Markdown'
 		});
 	}
 	async todo(msg,command){
@@ -239,18 +239,18 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`<b>${news.title}</b>\n\n<code>${news.brief}</code>\n\n<em>发布时间: ${news.time}</em>\n\n`;
+			const caption=`*${news.title}*\n\n> ${news.brief}\n\n_发布时间: ${news.time}_\n\n`;
 			const reply_markup={
 				inline_keyboard:[
 					[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
 				]
 			};
 			if(!news.img)await this.bot.sendMessage(id,caption,{
-				parse_mode:'HTML',reply_markup,
+				parse_mode:'Markdown',reply_markup,
 				disable_web_page_preview:true
 			});
 			else await this.bot.sendPhoto(id,news.img,{
-				caption,parse_mode:'HTML',reply_markup,
+				caption,parse_mode:'Markdown',reply_markup,
 				disable_web_page_preview:true
 			});
 			return true;
