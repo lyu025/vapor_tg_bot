@@ -11,7 +11,7 @@ const CC={
 	CR_TIME:process.env.CR_TIME||'* * * * *',
 	TG_TOKEN:process.env.TG_TOKEN,
 	PORT:process.env.PORT||3000
-},NM={},SM={},GM={};
+},NM={},GM={};
 
 const n_list=async()=>{
 	const x=await axios.get('https://www.flw.ph/forum.php?mod=forumdisplay&fid=40&filter=lastpost&orderby=dateline&mobile=2',{timeout:15000});
@@ -23,7 +23,7 @@ const n_list=async()=>{
 		const title=$e.find('.c h3').html().split('<').shift().trim();
 		const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：) */,'');
 		const ii=$e.find('.piclist img'),img=ii.length>0?ii.attr('src'):null;
-		if(!id||!title||(id in SM)||(id in NM))return;
+		if(!id||!title||(id in NM))return;
 		NM[id]={id,title,time,brief,img,info:'',ts:new Date().toISOString()}
 		o.push(NM[id]);
 	});
@@ -54,9 +54,6 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 
 if(!CC.TG_TOKEN)throw new Error('请在.env文件中设置TG_TOKEN');
-
-let wait=false;
-
 const BT=new TgBot(CC.TG_TOKEN,{
 	polling:{
 		autoStart:true,interval:1000, // 增加间隔
@@ -68,39 +65,36 @@ const BT=new TgBot(CC.TG_TOKEN,{
 
 //错误处理
 BT.on('polling_error',e=>{
-	if(e.message.includes('409')){
-		BT.stopPolling();
-		setTimeout(()=>BT.startPolling(),3000);
-	}
+	if(!e.message.includes('409'))return;
+	BT.stopPolling();
+	setTimeout(()=>BT.startPolling(),3000);
 });
 
-//加入群组
-BT.on('new_chat_members',async(m)=>{
+//入群
+BT.on('new_chat_members',async m=>{
 	const ms=m.new_chat_members,me=await BT.getMe();
 	const id=m.chat.id,type=m.chat.type,title=m.chat.title||'未命名群组';
-	if(ms.some(m=>m.id===me.id)&&type!=='private'){
-		GM[id]={id,type,title};
-		await BT.sendMessage(id,`🤖 机器人已加入！`,{
-			parse_mode:'Markdown',disable_web_page_preview:true
-		});
-	}
+	if(!ms.some(m=>m.id===me.id)||type==='private')return;
+	GM[id]={id,type,title};
+	await BT.sendMessage(id,`🤖 机器人已加入！`,{
+		parse_mode:'HTML',disable_web_page_preview:true
+	});
 });
-//退出群组
-BT.on('left_chat_member',async(m)=>{
-	const me=await BT.getMe();
-	if(m.left_chat_member.id===me.id&&GM[m.chat.id])delete GM[m.chat.id];
+//退群
+BT.on('left_chat_member',async m=>{
+	const me=await BT.getMe(),id=m.chat.id;
+	if(m.left_chat_member.id===me.id&&(id in GM))delete GM[id];
 });
 //获取资讯详情
-BT.on('callback_query',async(q)=>{
-	const {id,data}=q;
+BT.on('callback_query',async q=>{
+	const {id,data,message:m}=q;
 	try{
 		if(data.startsWith('expand_')){
-			const {message}=q;
-			const id=data.replace('expand_',''),n=NM[id];
-			const cid=message.chat.id,mid=message.message_id;
-			const detail=await n_info(id);
+			const id=data.replace('expand_','');
+			const cid=m.chat.id,mid=m.message_id;
+			const n=NM[id],infol=await n_info(id);
 			const caption=`*${n.title}*\n\n_发布时间: ${n.time}_\n\n`;
-			await BT['editMessage'+(message.text?'Text':'Caption')](caption+detail,{
+			await BT['editMessage'+(message.text?'Text':'Caption')](caption+info,{
 				chat_id:cid,message_id:mid,parse_mode:'Markdown'
 			});
 		}
@@ -113,30 +107,29 @@ BT.on('callback_query',async(q)=>{
 });
 
 //单发
-const send=async(id,news)=>{
+const send=async(id,n)=>{
 	try{
-		const caption=`*${news.title}*\n\n\`${news.brief}\`\n\n_发布时间: ${news.time}_\n\n`;
+		const caption=`*${n.title}*\n\n\`${n.brief}\`\n\n_发布时间: ${n.time}_\n\n`;
 		const reply_markup={
 			inline_keyboard:[
-				[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
+				[{text:'📖 展开详情',callback_data:`expand_${n.id}`}]
 			]
 		};
-		if(!news.img)await BT.sendMessage(id,caption,{
+		if(!n.img)await BT.sendMessage(id,caption,{
 			parse_mode:'Markdown',reply_markup,
 			disable_web_page_preview:true
 		});
-		else await BT.sendPhoto(id,news.img,{
+		else await BT.sendPhoto(id,n.img,{
 			caption,parse_mode:'Markdown',reply_markup,
 			disable_web_page_preview:true
 		});
 		return true;
 	}catch(e){
-		console.error(`❌ 发送失败到 ${id}:`,e.message);
 		return false;
 	}
 };
 //手动获取最新资讯
-BT.onText(/\/news/,async(m)=>{
+BT.onText(/\/news/,async m=>{
 	const id=m.chat.id;
 	const s=(await n_list()).slice(0,1);
 	for(const n of s)await send(id,n);
@@ -144,23 +137,20 @@ BT.onText(/\/news/,async(m)=>{
 
 
 //群发
+let wait=false,SM={};
 const bsend=async()=>{
 	if(wait)return;
-	wait=true;
-	if(Object.keys(GM).length==0){
-		wait=false;
-		return;
-	}
+	if(Object.keys(GM).length==0)return;
 	try{
 		const s=await n_list().slice(0,10);
-		if(s.length===0){
-			wait=false;
-			return;
-		}
+		if(s.length===0)return;
+		wait=true;
 		for(const g of GM){
 			for(const n of s){
+				const k=g.id+'_'+n.id;
+				if(k in SM)continue;
 				const ok=await send(g.id,n);
-				if(ok)NSM[n.id]=1;
+				if(ok)SM[k]=1;
 				await sleep(500);
 			}
 			await sleep(100);
@@ -180,7 +170,7 @@ const server=http.createServer((req,res)=>{
 	res.end(`...`);
 });
 server.listen(CC.PORT,()=>{
-	console.log(`🌐 Web服务器运行在:http://localhost:${CC.PORT}`);
+	console.log(`🌐 Web服务器运行在: http://localhost:${CC.PORT}`);
 });
 
 //全局错误处理
