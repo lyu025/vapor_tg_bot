@@ -80,7 +80,7 @@ class NF{
 		try{
 			const x=await axios.get(`https://www.flw.ph/forum.php?mod=viewthread&tid=${id}&mobile=2`,{timeout:10000});
 			const $=cheerio.load(x.data),o=[];
-			$('.main .message').each((i,v)=>{
+			$('.main .message').contents().each((i,v)=>{
 				if(v.type=='text'){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
 					if(x)o.push(`\n> ${o}`);
