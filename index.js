@@ -8,7 +8,7 @@ const axios=require('axios');
 const path=require('path');
 
 const CC={
-	CR_TIME:process.env.CR_TIME||'* * * * *',
+	CR_TIME:process.env.CR_TIME||'*/30 * * * * *',
 	TG_TOKEN:process.env.TG_TOKEN,
 	PORT:process.env.PORT||3000
 },NM={},GM={};
@@ -161,8 +161,9 @@ const bsend=async()=>{
 		wait=false;
 	}
 };
-cron.schedule(CC.CR_TIME,()=>bsend(),{scheduled:true,timezone:'Asia/Shanghai'});
+const task=cron.schedule(CC.CR_TIME,()=>bsend(),{scheduled:true,timezone:'Asia/Shanghai'});
 setTimeout(()=>bsend(),5000);
+task.start();
 
 const http=require('http');
 const server=http.createServer((req,res)=>{
