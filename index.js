@@ -79,30 +79,33 @@ class NF{
 	async info(id){
 		try{
 			const x=await axios.get(`https://www.flw.ph/forum.php?mod=viewthread&tid=${id}&mobile=2`,{timeout:10000});
-			const $=cheerio.load(x.data),o=[];
-			$('.main .message').contents().each((i,v)=>{
-				if(v.type=='text'){
-					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`\n> ${o}`);
-					return;
-				}
-				if(v.name=='br')return;
-				if(v.name=='strong'||v.name.startsWith('h')){
-					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`\n*${o}*`);
-					return;
-				}
-				const h=$(v).html().trim();
-				if(!h||h=='<br>')return;
-				const img=$(v).find('img'),text=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-				if(img){
-					o.push(`\n[${text||'...'}](https://www.flw.ph/forum.php${img.attr('src').replace('forum.php','')})`)
-					return;
-				}
-				const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-				if(x)o.push(`\n> ${o}`);
-			});
-			return o.join('');
+			let $=cheerio.load(x.data),o='';
+			const walk=nodes=>{
+				nodes.each((i,node)=>{
+					if(node.type==='text'){
+						const text=$(node).text().trim();
+						if(text)o+=(o&&!o.endsWith(' ')?' ':'')+text;
+					}else if(node.type==='tag'){
+						const el=$(node);
+						if(el.is('br')){
+							if(o&&!o.endsWith('\n\n'))o+='\n';
+						}else if(el.is('strong')){
+							o+=`**${el.text().trim()}**`;
+						}else if(el.is('img')){
+							const src='https://www.flw.ph/forum.php'+el.attr('src').replace('forum.php','');
+							const alt=el.attr('alt')||'';
+							if(src)o+=(o&&!o.endsWith('\n\n')?'\n\n':'')+`![${alt}](${src})\n\n`;
+						}else{
+							walk(el.contents());
+						}
+					}
+				});
+			};
+			walk($('.message').contents());
+			o=o.replace(/\s+/g,' ');
+			o=o.replace(/([。！？；.!?])\s*/g,'$1\n\n');
+			o=o.replace(/\n\s*\n\s*\n+/g,'\n\n');
+			return o.trim();
 		}catch(e){
 			console.log(`⚠️	获取详情失败:${e.message}`);
 			return '...';
