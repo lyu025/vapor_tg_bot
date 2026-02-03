@@ -19,6 +19,9 @@ class NS{
 		}
 		return {text,imgs:n.imgs,btns}
 	}
+	async o(){
+		await axios.get('https://vapor-tg-bot.onrender.com/',{timeout:1000})
+	}
 	async list(filter=false){
 		const x=await axios.get('https://www.flw.ph/forum.php?mod=forumdisplay&fid=40&filter=lastpost&orderby=dateline&mobile=2',{timeout:15000})
 		const $=cheerio.load(x.data),o=[]

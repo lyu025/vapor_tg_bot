@@ -26,6 +26,7 @@ tb.start().then(()=>{
 	}
 	tb.cron(async()=>{
 		const gm=tb.gm
+		await ns.o()
 		console.log('cron',tb.wait,Object.keys(gm).length)
 		if(tb.wait)return
 		if(Object.keys(gm).length==0)return
