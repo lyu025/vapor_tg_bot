@@ -200,7 +200,7 @@ class Bot{
 		const id=data.replace('expand_','');
 		const cid=message.chat.id,mid=message.message_id;
 		const detail=await this.nf.info(id);
-		await this.bot['editMessage'+(message.text?'Text':'Caption')]((message.text?message.text:message.caption)+detail,{
+		await this.bot['editMessage'+(message.text?'Text':'Caption')]((message.text?message.text:message.caption)+'\n\n'+detail,{
 			chat_id:cid,message_id:mid,parse_mode:'Markdown'
 		});
 	}
