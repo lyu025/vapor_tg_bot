@@ -108,7 +108,7 @@ class NF{
 			return o.join('');
 		}catch(e){
 			console.log(`⚠️	获取详情失败:${e.message}`);
-			return '';
+			return '...';
 		}
 	}
 	sleep(ms){
@@ -204,13 +204,11 @@ class Bot{
 		const {data,message}=_;
 		const id=data.replace('expand_','');
 		const cid=message.chat.id,mid=message.message_id;
-		
-		const detail="....";
-		//创建展开后的消息
-		const caption=`📰*新闻详情*\n\n${detail}`;
+		const detail=await this.nf.info(id);
+		const caption=message.caption+`<br><br>${detail}`;
 		//更新消息
 		await this.bot.editMessageCaption(caption,{
-			chat_id:cid,message_id:mid,parse_mode:'Markdown'
+			chat_id:cid,message_id:mid,parse_mode:'HTML'
 		});
 	}
 	async todo(msg,command){
