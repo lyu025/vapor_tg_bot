@@ -1,14 +1,7 @@
 services:
-  - type: web
-    name: vapor-tg-bot
-    env: node
-    buildCommand: npm install
-    startCommand: npm start
-    envVars:
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
-      - key: SCHEDULE_TIME
-        value: "*/30 * * * *"
-      - key: PORT
-        value: 3000
-    plan: free
+	- type: web
+		name: vapor-tg-bot
+		env: node
+		buildCommand: npm install
+		startCommand: npm start
+		plan: free
