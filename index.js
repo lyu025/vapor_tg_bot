@@ -66,12 +66,9 @@ class NF{
 				const time=$e.find('.time').text().trim();
 				const title=$e.find('.c h3').html().split('<').shift().trim();
 				const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：) */,'');
-				const imgs=[];
-				$e.find('.piclist img').each((j,ii)=>{
-					imgs.push($(ii).attr('src'));
-				});
+				const ii=$e.find('.piclist img'),img=ii.length>0?ii.attr('src'):null;
 				if(!id||!title||(id in im))return
-				o.push({id,title,time,brief,imgs,info:'',ts:new Date().toISOString()});
+				o.push({id,title,time,brief,img,info:'',ts:new Date().toISOString()});
 			});
 			return o;
 		}catch(e){
