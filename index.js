@@ -197,7 +197,7 @@ class Bot{
 	}
 	async expand(_){
 		const {data,message}=_;
-		const id=data.replace('expand_',''),n=this.sm.n_get(n.id);
+		const id=data.replace('expand_',''),n=this.sm.n_get(id);
 		const cid=message.chat.id,mid=message.message_id;
 		const detail=await this.nf.info(id);
 		const caption=`*${news.title}*\n\n_发布时间: ${news.time}_\n\n`;
