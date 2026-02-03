@@ -91,11 +91,11 @@ BT.on('callback_query',async q=>{
 	try{
 		if(data.startsWith('expand_')){
 			const id=data.replace('expand_','');
-			const cid=m.chat.id,mid=m.message_id;
 			const n=NM[id],infol=await n_info(id);
+			const chat_id=m.chat.id,message_id=m.message_id;
 			const caption=`*${n.title}*\n\n_发布时间: ${n.time}_\n\n`;
-			await BT['editMessage'+(message.text?'Text':'Caption')](caption+info,{
-				chat_id:cid,message_id:mid,parse_mode:'Markdown'
+			await BT['editMessage'+(m.text?'Text':'Caption')](caption+info,{
+				chat_id,message_id,parse_mode:'Markdown'
 			});
 		}
 		await BT.answerCallbackQuery(id);
