@@ -86,13 +86,13 @@ class NF{
 			$o.each(v=>{
 				if(v.type=='text'){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`<p>${o}</p>`);
+					if(x)o.push(`<i>${o}</i>`);
 					return;
 				}
 				if(v.name=='br')return;
 				if(v.name=='strong'||v.name.startsWith('h')){
 					const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-					if(x)o.push(`<strong>${o}</strong>`);
+					if(x)o.push(`<b><i>${o}</i></b>`);
 					return;
 				}
 				const h=$(v).html().trim();
@@ -103,7 +103,7 @@ class NF{
 					return;
 				}
 				const x=$(v).text().replace('【菲龙网】','').replace('【菲龙网专讯】','').trim();
-				if(x)o.push(`<p>${o}</p>`);
+				if(x)o.push(`<i>${o}</i>`);
 			});
 			return o.join('');
 		}catch(e){
@@ -242,7 +242,7 @@ class Bot{
 	}
 	async send(id,news){
 		try{
-			const caption=`<strong>${news.title}</strong><em>${news.time}</em><small>${news.brief}</small>`;
+			const caption=`<b>${news.title}</b><em>${news.time}</em><code>${news.brief}</code><u> </u>`;
 			const reply_markup={
 				inline_keyboard:[
 					[{text:'📖 展开详情',callback_data:`expand_${news.id}`}]
