@@ -84,7 +84,7 @@ class NF{
 				nodes.each((i,node)=>{
 					if(node.type==='text'){
 						const text=$(node).text().trim();
-						if(text)o+='\n  '+text;
+						if(text)o+='\n    '+text;
 					}else if(node.type==='tag'){
 						const el=$(node);
 						if(el.is('br')){}else if(el.is('strong')){
@@ -197,10 +197,11 @@ class Bot{
 	}
 	async expand(_){
 		const {data,message}=_;
-		const id=data.replace('expand_','');
+		const id=data.replace('expand_',''),n=this.sm.n_get(n.id);
 		const cid=message.chat.id,mid=message.message_id;
 		const detail=await this.nf.info(id);
-		await this.bot['editMessage'+(message.text?'Text':'Caption')]((message.text?message.text:message.caption)+'\n\n'+detail,{
+		const caption=`*${news.title}*\n\n_发布时间: ${news.time}_\n\n`;
+		await this.bot['editMessage'+(message.text?'Text':'Caption')](caption+detail,{
 			chat_id:cid,message_id:mid,parse_mode:'Markdown'
 		});
 	}
@@ -228,7 +229,10 @@ class Bot{
 	async onews(id){
 		try{
 			const s=(await this.nf.list()).slice(0,6);
-			for(const n of s)await this.send(id,n);
+			for(const n of s){
+				this.sm.n_set(n.id,n);
+				await this.send(id,n);
+			}
 		}catch(e){
 			console.error('❌ 发送新闻失败:',e);
 		}
@@ -271,6 +275,7 @@ class Bot{
 				this._=false;
 				return;
 			}
+			for(const n of s)this.sm.n_set(n.id,n);
 			//向每个群组发送新闻
 			for(const g of groups){
 				for(const n of s){
