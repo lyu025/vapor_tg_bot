@@ -5,7 +5,7 @@ class NS{
 	constructor(){
 		this.m={}
 	}
-	build(n){
+	_build(n){
 		let text=`<b>${n.title}</b>\n\n<code>${n.brief}</code>\n\n<i>${n.time}</i>`
 		let btns={
 			inline_keyboard:[
@@ -19,12 +19,12 @@ class NS{
 		}
 		return {text,imgs:n.imgs,btns}
 	}
-	async o(){
-		await axios.get('https://vapor-tg-bot.onrender.com/',{timeout:1000})
+	async wakeup(){
+		await axios.get('https://vapor-tg-bot.onrender.com/',{timeout:1000}).catch(_=>'')
 	}
-	async list(filter=false){
+	async list(num=0,filter=false){
 		const x=await axios.get('https://www.flw.ph/forum.php?mod=forumdisplay&fid=40&filter=lastpost&orderby=dateline&mobile=2',{timeout:15000})
-		const $=cheerio.load(x.data),o=[]
+		let $=cheerio.load(x.data),o=[]
 		$('#threadlist>li').each((i,e)=>{
 			const $e=$(e),imgs=[]
 			const id=$e.attr('id').split('_').pop()
@@ -33,29 +33,17 @@ class NS{
 			const brief=$e.find('.art-title').text().replace(/[\r\n\s]/g,'').replace(/^(【[^】]+】|[^：]+报：) */,'')
 			$e.find('.piclist img').each((j,ii)=>imgs.push($(ii).attr('src')))
 			if(!id||!title||(filter&&(id in this.m)))return
-			o.push(this.m[id]={id,title,time,brief,imgs,info:[],index:0})
+			this.m[id]={id,title,time,brief,imgs,info:[],index:0}
+			o.push(this._build(this.m[id]))
 		})
+		if(num>0)o=o.slice(0,num)
+		if(o.length>0)o.reverse()
 		return o
 	}
 	async info(id){
 		const x=await axios.get(`https://www.flw.ph/forum.php?mod=viewthread&tid=${id}&mobile=2`,{timeout:10000})
-		let $=cheerio.load(x.data),n=this.m[id],o=''
-		const walk=_=>_.each((i,e)=>{
-			if(e.type=='text'){
-				const text=$(e).text().trim()
-				if(text)o+=`\n		${text}`
-			}else if(e.type==='tag'){
-				const el=$(e)
-				if(el.is('br')){}else if(el.is('strong')){
-					o+=`\n		${el.text().trim()}`
-				}else{
-					walk(el.contents())
-				}
-			}
-		})
-		walk($('.message').contents())
-		this.m[id].info
-		o=o.replace(/^\n\s*/,'').trim()
+		const $=cheerio.load(x.data),n=this.m[id]
+		const o=$('.message').text().replace(/(\s*\n\s*){2,}/g,`\n		`).trim()
 		const a=(n.imgs.length<1?4000:1000)-(n.title+n.time).length,b=o.length
 		if(a>=b)this.m[id].info=[o]
 		else{

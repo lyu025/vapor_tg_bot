@@ -6,7 +6,9 @@ class TB{
 		this.token='8237071233:AAFLpj8Bw_j9MgjQWPJjMHKIUFIis6mamrQ'
 		this.bot=this.me=null
 		this.wait=false
-		this.gm={}
+		this.gm={
+			'-1003542336815':{id:-1003542336815,type:'supergroup',title:'景'}
+		}
 	}
 	async _me(){
 		return await this.bot.getMe()
@@ -60,6 +62,7 @@ class TB{
 			const {new_chat_members:ms,chat:{id,type,title}}=m
 			if(!ms.some(_=>_.id===this.me.id))return
 			this.gm[id]={id,type,title}
+			console.log(JSON.stringify(this.gm));
 			await this.send(id,`Vapor助手 已加入！`)
 		})
 		this.bot.on('left_chat_member',async m=>{ // 退群
@@ -83,9 +86,19 @@ class TB{
 	cmd(key,fn){
 		this.bot.onText(new RegExp('/'+key,'i'),async m=>fn(m.chat.id))
 	}
+	msg(o={}){
+		this.bot.on('message',m=>{
+			let id=m.chat.id,uid=m.from.id,v=false
+			for(let key in o)if(key==m.text){
+				o[key](id,uid)
+				v=true
+			}
+			if(!v&&o._)o._(id,uid,m.text)
+		})
+	}
 	cron(fn,_='*/20 * * * * *'){
 		const task=cron.schedule(_,()=>fn(),{scheduled:true,timezone:'Asia/Shanghai'})
-		setTimeout(()=>fn(),5000)
+		setTimeout(()=>fn(),2000)
 		task.start()
 	}
 	sleep(ms){
