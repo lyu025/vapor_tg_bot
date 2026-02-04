@@ -1,29 +1,31 @@
 const FT=require('./fortune')
+const MS=require('./music')
+const CS=require('./clause')
 const NS=require('./news')
 const TB=require('./bot')
 
 const ft=new FT()
+const ms=new MS()
+const cs=new CS()
 const ns=new NS()
 
 const tb=new TB()
 
 tb.start().then(()=>{
-	
-	tb.cmd('m3u8',async id=>{
-		const vu='https://europe.olemovienews.com/ts4/20260201/6q2lzf5x/mp4/6q2lzf5x.mp4/master.m3u8'
-		await tb.bot.sendVideo(id, vu, {
-				caption: '🎬 视频消息',
-				supports_streaming: true,
-				parse_mode: 'HTML'
-		});
-		
-	})
-	
 	const state={}
 	const _msg=async(id,uid,data=null)=>{
 		if(!(uid in state))return
-		const ss=['szsr','sxxg','sxys','xzjj','xzys'],s=state[uid]
-		if(!s||!ss.includes(s))return
+		const as=['szsr','sxxg','sxys','xzjj','xzys'],bs=['xh','hj','sc'],s=state[uid]
+		if(!s||!(as.includes(s)||bs.includes(s)||s=='ssgq'))return
+		if(s=='ssgq'){
+			if(!data){
+				await tb.send(id,'请输入歌曲名称/歌手关键字:',[],{})
+				return
+			}
+			delete state[uid]
+			const {text,btns}=await ms.search(data)
+			await tb.send(id,text,[],btns)
+		}
 		if(s=='szsr'){
 			if(!data){
 				await tb.send(id,'请输入您的生日(年月日，如: 2000/6/6):',[],{})
@@ -39,14 +41,19 @@ tb.start().then(()=>{
 			await tb.send(id,`您的生日为：${ft.ymd.join('/')}\n\n生肖为：${ft.sx[1]}\n\n星座为：${ft.xz[1]}`,[],{})
 			return
 		}
-		if(!ft.ymd){
-			state[uid]='szsr'
-			await tb.send(id,'尚未设置生日，请输入(年月日，如: 2000/6/6):',[],{})
-			return
-		}
 		delete state[uid]
-		const {text,imgs,btns}=await ft[s]()
-		await tb.send(id,text,imgs,btns)
+		if(as.includes(s)){
+			if(!ft.ymd){
+				state[uid]='szsr'
+				await tb.send(id,'尚未设置生日，请输入(年月日，如: 2000/6/6):',[],{})
+				return
+			}
+			const {text,imgs,btns}=await ft[s]()
+			await tb.send(id,text,imgs,btns)
+		}else if(bs.includes(s)){
+			const {text,imgs,btns}=await cs[s]()
+			await tb.send(id,text,imgs,btns)
+		}
 	}
 	tb.msg({
 		'设置生日':async(id,uid)=>{
@@ -70,11 +77,32 @@ tb.start().then(()=>{
 			state[uid]='xzys'
 			await _msg(id,uid)
 		},
+		'笑话':async(id,uid)=>{
+			state[uid]='xh'
+			await _msg(id,uid)
+		},
+		'好句':async(id,uid)=>{
+			state[uid]='hj'
+			await _msg(id,uid)
+		},
+		'诗词':async(id,uid)=>{
+			state[uid]='sc'
+			await _msg(id,uid)
+		},
+		'搜索歌曲':async(id,uid)=>{
+			state[uid]='ssgq'
+			await _msg(id,uid)
+		},
 		_:_msg
 	})
 	tb.cmd('fortune',async id=>{
 		await tb.send(id,'根据您的生日，查询今日运势(生肖运势、星座运势)',[],{
 			keyboard:[['设置生日','生肖性格','星座简介'],['生肖运势','星座运势']],resize_keyboard:true
+		})
+	})
+	tb.cmd('music',async id=>{
+		await tb.send(id,'歌曲大全',[],{
+			keyboard:[['搜索歌曲']],resize_keyboard:true
 		})
 	})
 	tb.cmd('news',async id=>{
@@ -83,7 +111,19 @@ tb.start().then(()=>{
 		const {text,imgs,btns}=n[0]
 		await tb.send(id,text,imgs,btns)
 	})
+	tb.cmd('clause',async id=>{
+		await tb.send(id,'笑话、好句、诗词，等等',[],{
+			keyboard:[['笑话','好句','诗词']],resize_keyboard:true
+		})
+	})
 
+	tb.music_play=async(cid,mid,o)=>{
+		const [id,title,performer]=o.split('_')
+		const {lyrics,url}=await ms.src(id)
+		await tb.bot.sendAudio(cid,url,{
+			title,performer,caption:lyrics
+		});
+	}
 	tb.news_info=async(cid,mid,id)=>{
 		await ns.info(id)
 		const {text,imgs,btns}=ns._build(ns.m[id])
