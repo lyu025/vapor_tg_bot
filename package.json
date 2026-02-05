@@ -1,18 +1,19 @@
 {
-	"name": "vapor_tg_bot",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "node index.js"
+	"name":"vapor_tg_bot",
+	"version":"1.0.0",
+	"description":"",
+	"main":"OO.js",
+	"scripts":{
+		"start":"node OO.js"
 	},
-	"dependencies": {
-		"axios": "^1.13.4",
-		"cheerio": "^1.2.0",
-		"node-cron": "^4.2.1",
-		"node-telegram-bot-api": "^0.67.0"
+	"dependencies":{
+		"axios":"^1.13.4",
+		"cheerio":"^1.2.0",
+		"node-cron":"^4.2.1",
+		"node-telegram-bot-api":"^0.67.0"
 	},
-	"engines": {
-		"node": ">=18.0.0"
-	}
+	"engines":{
+		"node":">=18.0.0"
+	},
+	"license":"MIT"
 }
