@@ -6,9 +6,10 @@ class MS{
 		const x=await axios.get('https://www.gequbao.com/s/'+encodeURIComponent(kw),{timeout:15000})
 		const $=cheerio.load(x.data),btns={inline_keyboard:[]}
 		const text='搜索“'+kw+'”结果：'+$('.h6.badge-light-orange').text().trim()
-		$('.row.py-2d5').each((i,e)=>{
-			const $e=$(e),id=$e.find('.btn-sm').attr('href').split('/').pop().trim()
-			const title=$e.find('.text-primary').text().trim(),singer=$e.find('.text-jade').text().trim()
+		$('.row.py-2d5 .btn-sm').each((i,e)=>{
+			const $e=$(e),id=$e.attr('href').split('/').pop().trim()
+			const [title,singer]=$e.attr('title').split(' - ')
+			if(title.length>10||singer.length>10)return
 			btns.inline_keyboard.push([{text:`${title} - ${singer}`,callback_data:`music_play__${id}_${title}_${singer}`}])
 		})
 		return {text,btns}
