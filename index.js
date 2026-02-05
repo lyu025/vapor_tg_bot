@@ -25,6 +25,7 @@ tb.start().then(()=>{
 			delete state[uid]
 			const {text,btns}=await ms.search(data)
 			await tb.send(id,text,[],btns)
+			return
 		}
 		if(s=='szsr'){
 			if(!data){
