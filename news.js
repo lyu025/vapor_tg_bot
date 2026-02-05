@@ -15,7 +15,13 @@ class NS{
 		if(n.info.length>0){
 			text=`<b>${n.title}</b>\n\n<i>${n.time}</i>\n\n<code>${n.info[n.index]}</code>`
 			if(n.info.length==1)btns={}
-			else btns.inline_keyboard[0]=n.info.map((_,i)=>({text:`#${i+1}`,callback_data:`news_index__${n.id}_${i}`}))
+			else{
+				const c=n.info.length-1,i=n.index
+				if(c<1)btns.inline_keyboard=[]
+				else if(i<1)btns.inline_keyboard[0]=[{text:`下一页`,callback_data:`news_index__${n.id}_1`}]
+				else if(i<c)btns.inline_keyboard[0]=[{text:`上一页`,callback_data:`news_index__${n.id}_${i-1}`},{text:`下一页`,callback_data:`news_index__${n.id}_${i+1}`}]
+				else btns.inline_keyboard[0]=[{text:`上一页`,callback_data:`news_index__${n.id}_${i-1}`}]
+			}
 		}
 		return {text,imgs:n.imgs,btns}
 	}
