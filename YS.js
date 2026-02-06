@@ -59,6 +59,7 @@ class YS{
 	async sxxg(id,sx,xz){ // 生肖性格
 		const url=`https://m.smxs.com/shengxiao/wenhua/${sx[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
+		if(!$)return
 		$('.xiaoxi_item').each((i,e)=>o.push(`<b>${$(e).text().trim()}</b>`))
 		o=[`您的生肖为: <b>${sx[1]}</b>`,o.join(`\t\t\t`)]
 		$('.yydesc').each((i,e)=>{
@@ -77,6 +78,7 @@ class YS{
 	async sxys(id,sx,xz){ // 生肖运势
 		const url=`https://m.smxs.com/shengxiaoriyun/${sx[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
+		if(!$)return
 		$('.hlinfoitem').each((i,e)=>o.push(`<b>${$(e).text().trim()}</b>`))
 		o.push(`您的生肖为: <b>${sx[1]}</b>`)
 		$('.sxysbox').each((i,e)=>{
@@ -95,6 +97,7 @@ class YS{
 	async xzjj(id,sx,xz){ // 星座简介
 		const url=`https://m.smxs.com/xingzuo/${xz[0]}.html`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
+		if(!$)return
 		$('.subs').each((i,e)=>{
 			const $e=$(e),t=$e.find('.subs_title'+(i==0?'>small':'')).text().trim()
 			let v=$e.find('.subs_main').text().trim()
@@ -107,6 +110,7 @@ class YS{
 			if(i==1)v=`\n`+v.replace(/ *\n */g,`       `).replace(/： */g,'☞').trim()
 			o.push(`\n<b>${t}：</b><em>${v}</em>`)
 		})
+		if(o.length<1)return
 		await this.B.text(id,o.join(`\n`),{
 			inline_keyboard:[[
 				{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}`},
@@ -119,6 +123,7 @@ class YS{
 	async xzys(id,sx,xz){ // 星座运势
 		const url=`https://m.smxs.com/xingzuoriyun/${xz[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
+		if(!$)return
 		o.push(`<b>${$('.xzlantit').text().trim()}</b>`)
 		o.push(`<b>幸运颜色：</b>${$('.xzcldesc').text().trim()}`)
 		o.push(`<b>速配星座：</b>${$('.xzspdesc').text().trim()}`)
