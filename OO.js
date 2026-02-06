@@ -10,6 +10,7 @@ const bt=require('./BT').O()
 const cs=require('./CS').O(bt,R)
 const zx=require('./ZX').O(bt,C,R)
 const ys=require('./YS').O(bt,C,R)
+const mk=require('./MK').O(bt,C,R)
 const mc=require('./MC').O(bt,C,R)
 
 bt.start().then(async()=>{
@@ -17,10 +18,11 @@ bt.start().then(async()=>{
 	cs.init()
 	zx.init()
 	ys.init()
+	mk.init()
 	mc.init()
 	// 初始化命令
 	bt.cmd('start',id=>bt.text(id,'💥 欢迎使用Vapor助手！',{
-		keyboard:[['动态资讯','今日运势','随机段子'],['歌曲检索']],
+		keyboard:[['动态资讯','今日运势','随机段子'],['歌曲检索','市场行情']],
 		resize_keyboard:true
 	}))
 	// 定时服务唤醒,10秒一次
