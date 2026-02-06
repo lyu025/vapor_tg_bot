@@ -5,9 +5,6 @@ class ZX{
 		return ZX.#o
 	}
 	constructor(B,C,R){
-		this.FLW_LU='https://www.flw.ph/forum.php?mod=forumdisplay&fid=40&filter=lastpost&orderby=dateline&mobile=2'
-		this.FLW_DU='https://www.flw.ph/forum.php?mod=viewthread&mobile=2&tid='
-		
 		this.O={'菲龙网':['flw',true],'菲星报':['fxb',false],'财联社':['cls',false],'金十快讯':['jskx',false]}
 		this.B=B
 		this.C=C
@@ -79,7 +76,8 @@ class ZX{
 	}
 	async list_flw(){
 		if(!('flw' in this._))this._.flw={}
-		const s=[],$=await this.R.get(this.FLW_LU,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
+		const url='https://www.flw.ph/forum.php?mod=forumdisplay&fid=40&filter=lastpost&orderby=dateline&mobile=2'
+		const s=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		if(!$)return s
 		const ss=$('#threadlist>li').toArray().reverse()
 		for(const g of this.B.G)for(let i=0;i<ss.length;i++){
@@ -99,8 +97,9 @@ class ZX{
 		}
 	}
 	async info_flw(id,cid,mid){
-		const {imgs,title,time}=this._.flw[id],$=await this.R.get(this.FLW_DU+id,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
-		const o=$('.message').text().replace(/(\s*\n\s*){2,}/g,`\n　　`).trim()
+		const url='https://www.flw.ph/forum.php?mod=viewthread&mobile=2&tid='
+		const {imgs,title,time}=this._.flw[id],$=await this.R.get(url+id,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
+		const o=$('.message').text().replace(/(\s*\n\s*){1,}/g,`\n　　`).trim()
 		const a=(imgs.length<1?4000:1000)-(title+time).length,b=o.length
 		if(a>=b)this._.flw[id].info=[o]
 		else{
