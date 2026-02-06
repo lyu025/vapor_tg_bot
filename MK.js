@@ -33,7 +33,7 @@ class MK{
 	async hl(id,mid){ // 外汇汇率
 		const M={USD:'美元',EUR:'欧元',GBP:'英镑',JPY:'日元',KRW:'韩元',AUD:'澳元',HKD:'港币',RUB:'俄卢布',PHP:'菲披索',CNH:'离岸人民币',CNY:'人民币'}
 		const Q=Object.keys(M).filter(_=>_!='CNY').map(_=>`currencyPairs=${_}%2FCNY`).join('&')
-		const url=`https://www.xe.com/api/protected/live-currency-rates/?${Q}&currencyPairs=CNY%2FPHP&_=`+Date.now()
+		const url=`https://www.xe.com/api/protected/live-currency-rates/?currencyPairs=CNY%2FPHP&${Q}&_=`+Date.now()
 		const s=await this.R.get(url,{
 			timeout:15000,
 			headers:{Authorization:'Basic '+this.A}
