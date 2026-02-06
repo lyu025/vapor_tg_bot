@@ -25,24 +25,20 @@ class YS{
 				return
 			}
 			const {sr,sx,xz}=this.parse(o.split('/').map(_=>parseInt(_.trim())))
-			await this.B.text(id,`🍀 您的生日为：${sr}\n\n生肖为：${sx[1]}\n\n星座为：${xz[1]}`,{
-				inline_keyboard:[
-					[
-						{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}`},
-						{text:'生肖运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}`},
-					],
-					[
-						{text:'星座简介',callback_data:`jrys_xzjj.${xz[0]}_${xz[1]}`},
-						{text:'星座运势',callback_data:`jrys_xzys.${xz[0]}_${xz[1]}`}
-					]
-				],resize_keyboard:true
+			await this.B.text(id,`🍀 您的生日为：${sr}\n\n生肖为：${sx[1]}　　星座为：${xz[1]}`,{
+				inline_keyboard:[[
+					{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}:${xz[0]}_${xz[1]}`},
+					{text:'生肖运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}:${xz[0]}_${xz[1]}`},
+					{text:'星座简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}:${xz[0]}_${xz[1]}`},
+					{text:'星座运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}:${xz[0]}_${xz[1]}`}
+				]],resize_keyboard:true
 			})
 		}
 		// 点击内联按钮
-		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,o.split('_'))
-		this.B.H.jrys_sxys=async(id,mid,o)=>await this.sxys(id,o.split('_'))
-		this.B.H.jrys_xzjj=async(id,mid,o)=>await this.xzjj(id,o.split('_'))
-		this.B.H.jrys_xzys=async(id,mid,o)=>await this.xzys(id,o.split('_'))
+		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,...o.split('_').map(_=>_.split(':')))
+		this.B.H.jrys_sxys=async(id,mid,o)=>await this.sxys(id,...o.split('_').map(_=>_.split(':')))
+		this.B.H.jrys_xzjj=async(id,mid,o)=>await this.xzjj(id,...o.split('_').map(_=>_.split(':')))
+		this.B.H.jrys_xzys=async(id,mid,o)=>await this.xzys(id,...o.split('_').map(_=>_.split(':')))
 	}
 	parse(ymd){
 		if(!ymd)return
@@ -60,7 +56,7 @@ class YS{
 		const sr=ymd.join('/'),sx=a[(y-4)%12],xz=b[i<0?11:i].n
 		return {sr,sx,xz}
 	}
-	async sxxg(id,sx){ // 生肖性格
+	async sxxg(id,sx,xz){ // 生肖性格
 		const url=`https://m.smxs.com/shengxiao/wenhua/${sx[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		$('.xiaoxi_item').each((i,e)=>o.push(`<b>${$(e).text().trim()}</b>`))
@@ -69,9 +65,16 @@ class YS{
 			const v=$(e).text().trim(),t=i<1?'':(i==1?`<b>性格优点：</b>`:`<b>性格缺点：</b>`)
 			o.push(`\n${t}<em>${v}</em>`)
 		})
-		await this.B.text(id,o.join(`\n`))
+		await this.B.text(id,o.join(`\n`),{
+			inline_keyboard:[[
+				{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}`},
+				{text:'生肖运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}`},
+				{text:'星座简介',callback_data:`jrys_xzjj.${xz[0]}_${xz[1]}`},
+				{text:'星座运势',callback_data:`jrys_xzys.${xz[0]}_${xz[1]}`}
+			]],resize_keyboard:true
+		})
 	}
-	async sxys(id,sx){ // 生肖运势
+	async sxys(id,sx,xz){ // 生肖运势
 		const url=`https://m.smxs.com/shengxiaoriyun/${sx[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		$('.hlinfoitem').each((i,e)=>o.push(`<b>${$(e).text().trim()}</b>`))
@@ -80,9 +83,16 @@ class YS{
 			const $e=$(e),t=$e.find('.ystit').text().trim(),v=$e.find('.ysdesc').text().trim()
 			o.push(`\n<b>${t}：</b><em>${v}</em>`)
 		})
-		await this.B.text(id,o.join(`\n`))
+		await this.B.text(id,o.join(`\n`),{
+			inline_keyboard:[[
+				{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}`},
+				{text:'生肖运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}`},
+				{text:'星座简介',callback_data:`jrys_xzjj.${xz[0]}_${xz[1]}`},
+				{text:'星座运势',callback_data:`jrys_xzys.${xz[0]}_${xz[1]}`}
+			]],resize_keyboard:true
+		})
 	}
-	async xzjj(id,xz){ // 星座简介
+	async xzjj(id,sx,xz){ // 星座简介
 		const url=`https://m.smxs.com/xingzuo/${xz[0]}.html`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		$('.subs').each((i,e)=>{
@@ -97,9 +107,16 @@ class YS{
 			if(i==1)v=`\n`+v.replace(/ *\n */g,`       `).replace(/： */g,'☞').trim()
 			o.push(`\n<b>${t}：</b><em>${v}</em>`)
 		})
-		await this.B.text(id,o.join(`\n`))
+		await this.B.text(id,o.join(`\n`),{
+			inline_keyboard:[[
+				{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}`},
+				{text:'生肖运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}`},
+				{text:'星座简介',callback_data:`jrys_xzjj.${xz[0]}_${xz[1]}`},
+				{text:'星座运势',callback_data:`jrys_xzys.${xz[0]}_${xz[1]}`}
+			]],resize_keyboard:true
+		})
 	}
-	async xzys(id,xz){ // 星座运势
+	async xzys(id,sx,xz){ // 星座运势
 		const url=`https://m.smxs.com/xingzuoriyun/${xz[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		o.push(`<b>${$('.xzlantit').text().trim()}</b>`)
@@ -110,7 +127,14 @@ class YS{
 			const $e=$(e),t=$e.find('.ztystit').text().trim(),v=$e.find('.ztysdesc').text().trim()
 			o.push(`\n<b>${t}：</b><em>${v}</em>`)
 		})
-		await this.B.text(id,o.join(`\n`))
+		await this.B.text(id,o.join(`\n`),{
+			inline_keyboard:[[
+				{text:'生肖性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}`},
+				{text:'生肖运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}`},
+				{text:'星座简介',callback_data:`jrys_xzjj.${xz[0]}_${xz[1]}`},
+				{text:'星座运势',callback_data:`jrys_xzys.${xz[0]}_${xz[1]}`}
+			]],resize_keyboard:true
+		})
 	}
 }
 module.exports=YS
