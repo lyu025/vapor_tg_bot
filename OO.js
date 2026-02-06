@@ -24,7 +24,7 @@ bt.start().then(async()=>{
 	// 定时服务唤醒,20秒一次
 	T.schedule('*/20 * * * * *',async()=>{
 		const url='https://vapor-tg-bot.onrender.com'
-		await R.get(url,{timeout:1}).catch(()=>0)
+		await R.get(url,{timeout:1000}).catch(()=>null)
 	},{scheduled:true,timezone:'Asia/Shanghai'}).start()
 	// 定时拉取资讯,两分钟一次
 	const t_zx=async()=>{
