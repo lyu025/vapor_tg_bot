@@ -21,8 +21,8 @@ bt.start().then(async()=>{
 		keyboard:[['动态资讯','今日运势','随机段子'],['歌曲检索']],
 		resize_keyboard:true
 	}))
-	// 定时服务唤醒,40秒一次
-	T.schedule('*/40 * * * * *',async()=>{
+	// 定时服务唤醒,20秒一次
+	T.schedule('*/20 * * * * *',async()=>{
 		const url='https://vapor-tg-bot.onrender.com'
 		await R.get(url,{timeout:1}).catch(()=>0)
 	},{scheduled:true,timezone:'Asia/Shanghai'}).start()
