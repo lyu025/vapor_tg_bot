@@ -35,10 +35,10 @@ class YS{
 		})
 		}
 		// 点击内联按钮
-		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,...o.split('_').map(_=>_.split(':')))
-		this.B.H.jrys_sxys=async(id,mid,o)=>await this.sxys(id,...o.split('_').map(_=>_.split(':')))
-		this.B.H.jrys_xzjj=async(id,mid,o)=>await this.xzjj(id,...o.split('_').map(_=>_.split(':')))
-		this.B.H.jrys_xzys=async(id,mid,o)=>await this.xzys(id,...o.split('_').map(_=>_.split(':')))
+		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,...o.split(':').map(_=>_.split('_')))
+		this.B.H.jrys_sxys=async(id,mid,o)=>await this.sxys(id,...o.split(':').map(_=>_.split('_')))
+		this.B.H.jrys_xzjj=async(id,mid,o)=>await this.xzjj(id,...o.split(':').map(_=>_.split('_')))
+		this.B.H.jrys_xzys=async(id,mid,o)=>await this.xzys(id,...o.split(':').map(_=>_.split('_')))
 	}
 	parse(ymd){
 		if(!ymd)return

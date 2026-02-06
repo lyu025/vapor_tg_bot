@@ -32,8 +32,6 @@ class BT{
 			const {new_chat_members:ms,chat:{id,type,title}}=m
 			if(!ms.some(_=>_.id===this.id))return
 			if(!this.G.includes(id))this.G.push(id)
-			
-			console.log(JSON.stringify(this.G))
 			await this.text(id,`Vapor助手 已加入！`)
 		})
 		// 退群
@@ -41,8 +39,6 @@ class BT{
 			const id=m.chat.id
 			if(this.id<1)this.id=await this.o.getMe().then(_=>_.id).catch(_=>0)
 			if(m.left_chat_member.id==this.id&&(id in this.G))this.G=this.G.filter(_=>_!=id)
-			
-			console.log(JSON.stringify(this.G))
 		})
 		this.o.on('callback_query',async({id,data:x,message:m})=>{
 			try{
