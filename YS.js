@@ -27,12 +27,12 @@ class YS{
 			const {sr,sx,xz}=this.parse(o.split('/').map(_=>parseInt(_.trim())))
 			await this.B.text(id,`🍀 您的生日为：${sr}\n\n生肖为：${sx[2]+' '+sx[1]}　　星座为：${xz[2]+' '+xz[1]}`,{
 				inline_keyboard:[[
-				{text:sx[2]+'性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:sx[2]+'运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
-			]],resize_keyboard:true
-		})
+					{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+					{text:sx[2]+' 运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+					{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+					{text:xz[2]+' 运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
+				]],resize_keyboard:true
+			})
 		}
 		// 点击内联按钮
 		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,...o.split(':').map(_=>_.split('_')))
@@ -73,10 +73,10 @@ class YS{
 		})
 		await this.B.text(id,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+'性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:sx[2]+'运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
 			]],resize_keyboard:true
 		})
 	}
@@ -92,10 +92,10 @@ class YS{
 		})
 		await this.B.text(id,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+'性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:sx[2]+'运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
 			]],resize_keyboard:true
 		})
 	}
@@ -118,10 +118,10 @@ class YS{
 		if(o.length<1)return
 		await this.B.text(id,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+'性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:sx[2]+'运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
 			]],resize_keyboard:true
 		})
 	}
@@ -139,10 +139,10 @@ class YS{
 		})
 		await this.B.text(id,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+'性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:sx[2]+'运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
-				{text:xz[2]+'运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${sx[0]}_${sx[1]}_${sx[2]}:${xz[0]}_${xz[1]}_${xz[2]}`}
 			]],resize_keyboard:true
 		})
 	}
