@@ -11,14 +11,17 @@ class YS{
 	}
 	init(){
 		// 点击底部按钮
-		this.B.H['今日运势']=async(id,uid)=>{
-			if(!(uid in this.B.U))this.B.U[uid]={_:'jrys'}
-			this.B.U[uid]._='jrys'
+		this.B.H['今日运势']=async(id,uid,init=true)=>{
+			if(!(uid in this.B.U))this.B.U[uid]={_:'jrys.今日运势.●'}
+			this.B.U[uid]._='jrys.今日运势.●'
 			
-			let o=this.B.U[uid].jrys
-			if(o)if(!/^\s*[1-9]\d{3}\s*\/\s*(0?[1-9]||1[0-2])\s*\/\s*(0?[1-9]||[1-3]\d)\s*$/.test(o))o=null
+			const reg=/^\s*[1-9]\d{3}\s*\/\s*(0?[1-9]||1[0-2])\s*\/\s*(0?[1-9]||[1-3]\d)\s*$/
+			let o=this.B.U[uid].jrys,wrong=o&&!reg.test(o)
+			if(wrong)o=this.B.U[uid].jrys=null
+			if(init)wrong=false
 			if(!o){
-				await this.B.text(id,'🍀 查询今日运势，输入您的生日(如:2002/06/21)：')
+				const text=wrong?'🔴, 生日格式错误，请重新输入(如:2002/06/21)：':'🍀 查询今日运势，输入您的生日(如:2002/06/21)：'
+				await this.B.text(id,text)
 				return
 			}
 			const {sr,sx,xz}=this.parse(o.split('/').map(_=>parseInt(_.trim())))

@@ -11,8 +11,8 @@ class CS{
 	init(){
 		// 点击底部按钮
 		this.B.H['随机段子']=async(id,uid)=>{
-			if(!(uid in this.B.U))this.B.U[uid]={_:'sjdz'}
-			this.B.U[uid]._='sjdz'
+			if(!(uid in this.B.U))this.B.U[uid]={_:'sjdz.随机段子.○'}
+			this.B.U[uid]._='sjdz.随机段子.○'
 			
 			const text='🪶 随机笑话、段子、诗词，点击下列按钮开始吧！'
 			await this.B.text(id,text,{

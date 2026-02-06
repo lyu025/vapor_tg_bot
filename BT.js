@@ -11,7 +11,11 @@ class BT{
 		this.U={}
 		this.o=this.id=null
 		this.G=[-1003542336815]
-		this.H={_:(id,o)=>{this.U[id][this.U[id]._]=o}}
+		this.H={_:async(id,uid,o)=>{
+			const [k,n,x]=this.U[uid]._.split('.')
+			this.U[uid][k]=o
+			if(x=='●')await this.H[n](id,uid,false)
+		}}
 	}
 	async start(){
 		this.o=new B(BT.#tk,{polling:{autoStart:true,interval:1000,params:{timeout:30,offset:-1}}})
@@ -51,17 +55,31 @@ class BT{
 		})
 		this.o.on('message',async m=>{
 			let id=m.chat.id,uid=m.from.id,o=m.text.trim()
-			
-			console.log({uid,id,o})
 			if(o in this.H)await this.H[o](id,uid)
-			else if(!o.startsWith('/'))this.H._(uid,o)
+			else if(!o.startsWith('/'))await this.H._(id,uid,o)
 		})
+	}
+	async remove(cid,mid){
+		await this.o.deleteMessage(cid,mid)
 	}
 	async text(id,text,reply_markup={}){
 		await this.sleep(1000)
 		return await this.o.sendMessage(id,text,{
 			parse_mode:'HTML',reply_markup,
 			disable_web_page_preview:true
+		}).catch(_=>{
+			console.error('🔴e:',_.message)
+			return 0
+		})
+	}
+	async audio(id,url,title,performer,caption,reply_markup={}){
+		await this.sleep(1000)
+		return await this.o.sendAudio(id,url,{
+			title,performer,caption,parse_mode:'HTML',reply_markup,
+			disable_web_page_preview:true
+		}).catch(_=>{
+			console.error('🔴e:',_.message)
+			return 0
 		})
 	}
 	async photo(id,img,caption,reply_markup={}){
@@ -69,24 +87,30 @@ class BT{
 		return await this.o.sendPhoto(id,img,{
 			caption,parse_mode:'HTML',reply_markup,
 			disable_web_page_preview:true
+		}).catch(_=>{
+			console.error('🔴e:',_.message)
+			return 0
 		})
 	}
 	async gallery(id,imgs,caption,reply_markup={}){
 		await this.sleep(1000)
-		await this.o.sendMediaGroup(id,imgs.map((_,i)=>({type:'photo',media:_,caption:''})))
+		await this.o.sendMediaGroup(id,imgs.map((_,i)=>({type:'photo',media:_,caption:''}))).catch(_=>{
+			console.error('🔴e:',_.message)
+			return 0
+		})
 		return await this.text(id,caption,reply_markup)
 	}
 	async edit_text(chat_id,message_id,text,reply_markup){
 		await this.o.editMessageText(text,{
 			chat_id,message_id,parse_mode:'HTML',reply_markup,
 			disable_web_page_preview:true
-		})
+		}).catch(_=>console.error('🔴e:',_.message))
 	}
 	async edit_caption(chat_id,message_id,caption,reply_markup){
 		await this.o.editMessageCaption(caption,{
 			chat_id,message_id,parse_mode:'HTML',reply_markup,
 			disable_web_page_preview:true
-		})
+		}).catch(_=>console.error('🔴e:',_.message))
 	}
 	cmd(k,f){
 		this.o.onText(new RegExp('/'+k,'i'),m=>f(m.chat.id))

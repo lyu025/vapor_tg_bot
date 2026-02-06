@@ -16,10 +16,12 @@ class ZX{
 	}
 	init(){
 		// 点击底部按钮
-		this.B.H['动态资讯']=async(id,uid)=>{
-			if(!(uid in this.B.U))this.B.U[uid]={_:'dtzx'}
-			this.B.U[uid]._='dtzx'
-			this.B.U[uid].mid=null
+		this.B.H['动态资讯']=async(id,uid,init=true)=>{
+			if(!(uid in this.B.U))this.B.U[uid]={_:'dtzx.动态资讯.○'}
+			this.B.U[uid]._='dtzx.动态资讯.○'
+			
+			if(this.B.U[uid].zxmid)await this.B.remove(id,this.B.U[uid].zxmid)
+			this.B.U[uid].zxmid=null
 			
 			const ia=await this.B.is_admin(id,uid)
 			const ks=Object.keys(this.O),inline_keyboard=[]
@@ -35,12 +37,13 @@ class ZX{
 				}
 				text='🔥 实时获取已开启的媒体的最新资讯，点击下方按钮切换是否开启获取对应媒体最新资讯:'
 			}
-			this.B.U[uid].mid=await this.B.text(id,text,{
+			this.B.U[uid].zxmid=await this.B.text(id,text,{
 				inline_keyboard,resize_keyboard:true
 			}).then(_=>_.message_id).catch(_=>null)
 		}
 		// 点击内联按钮-切换站点开关
 		this.B.H.dtzx_switch=async(id,mid,o)=>{
+			if(!this.B.U[uid].zxmid)return
 			const [uid,k]=o.split('_')
 			this.O[k][1]=!this.O[k][1]
 			const ks=Object.keys(this.O),inline_keyboard=[],text='🔥 实时获取已开启的媒体的最新资讯，点击下方按钮切换是否开启获取对应媒体最新资讯:'
@@ -52,7 +55,7 @@ class ZX{
 				}
 				inline_keyboard.push(r)
 			}
-			await this.B.edit_text(id,this.B.U[uid].mid,text,{
+			await this.B.edit_text(id,this.B.U[uid].zxmid,text,{
 				inline_keyboard,resize_keyboard:true
 			})
 		}
@@ -90,13 +93,9 @@ class ZX{
 			this._.flw[id]={title,time,brief,imgs,info:[],i:0}
 			const text=`<b>${title}</b>\n\n${brief}\n\n<i>${time}</i>`
 			const btns={inline_keyboard:[[{text:'📖 展开详情',callback_data:`dtzx_info.flw_${id}`}]]}
-			try{
-				if(imgs.length<1)await this.B.text(g,text,btns)
-				else if(imgs.length<2)await this.B.photo(g,imgs[0],text,btns)
-				else await this.B.gallery(g,imgs,text,btns)
-			}catch(e){
-				console.log(e);
-			}
+			if(imgs.length<1)await this.B.text(g,text,btns)
+			else if(imgs.length<2)await this.B.photo(g,imgs[0],text,btns)
+			else await this.B.gallery(g,imgs,text,btns)
 		}
 	}
 	async info_flw(id,cid,mid){
