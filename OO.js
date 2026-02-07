@@ -44,7 +44,7 @@ bt.start().then(async()=>{
 // Web服务
 H.createServer((_,P)=>{
 	P.writeHead(200,{'Content-Type':'text/html;charset=utf-8'})
-	P.end(`...`)
+	P.end(`<img src='https://s1.aigei.com/src/img/gif/59/59bea5604f3445b0aefb640dd559f0ad.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:5k9EcmB0kwPvUgwhLjKKCLZdg_I='/>`)
 }).listen(3001,()=>{
 	console.log(`🌐 Web服务器已启动！`)
 })
