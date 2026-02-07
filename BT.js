@@ -58,8 +58,8 @@ class BT{
 	async remove(cid,mid){
 		await this.o.deleteMessage(cid,mid)
 	}
-	async text(id,text,reply_markup={}){
-		await this.sleep(1000)
+	async text(id,text,reply_markup={},nw=true){
+		if(nw)await this.sleep(1000)
 		return await this.o.sendMessage(id,text,{
 			parse_mode:'HTML',reply_markup,
 			disable_web_page_preview:true
@@ -94,7 +94,7 @@ class BT{
 			console.error('🔴e:',_.message)
 			return 0
 		})
-		return await this.text(id,caption,reply_markup)
+		return await this.text(id,caption,reply_markup,false)
 	}
 	async edit_text(chat_id,message_id,text,reply_markup){
 		await this.o.editMessageText(text,{
