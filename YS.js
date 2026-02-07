@@ -27,18 +27,18 @@ class YS{
 			const {sr,sx,xz}=this.parse(o.split('/').map(_=>parseInt(_.trim())))
 			await this.B.text(id,`🍀 您的生日为：${sr}\n\n生肖为：${sx[2]+' '+sx[1]}　　星座为：${xz[2]+' '+xz[1]}`,{
 				inline_keyboard:[[
-					{text:sx[2]+' 性格',callback_data:`jrys_sxxg.`},
-					{text:sx[2]+' 运势',callback_data:`jrys_sxys.`},
-					{text:xz[2]+' 简介',callback_data:`jrys_xzjj.`},
-					{text:xz[2]+' 运势',callback_data:`jrys_xzys.`}
+					{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${uid}`},
+					{text:sx[2]+' 运势',callback_data:`jrys_sxys.${uid}`},
+					{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${uid}`},
+					{text:xz[2]+' 运势',callback_data:`jrys_xzys.${uid}`}
 				]],resize_keyboard:true
 			})
 		}
 		// 点击内联按钮
-		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,mid)
-		this.B.H.jrys_sxys=async(id,mid,o)=>await this.sxys(id,mid)
-		this.B.H.jrys_xzjj=async(id,mid,o)=>await this.xzjj(id,mid)
-		this.B.H.jrys_xzys=async(id,mid,o)=>await this.xzys(id,mid)
+		this.B.H.jrys_sxxg=async(id,mid,o)=>await this.sxxg(id,mid,o)
+		this.B.H.jrys_sxys=async(id,mid,o)=>await this.sxys(id,mid,o)
+		this.B.H.jrys_xzjj=async(id,mid,o)=>await this.xzjj(id,mid,o)
+		this.B.H.jrys_xzys=async(id,mid,o)=>await this.xzys(id,mid,o)
 	}
 	parse(ymd){
 		if(!ymd)return
@@ -61,52 +61,52 @@ class YS{
 		const sr=ymd.join('/'),sx=a[(y-4)%12],xz=b[i<0?11:i].n
 		return {sr,sx,xz}
 	}
-	async sxxg(id,mid){ // 生肖性格
+	async sxxg(id,mid,uid){ // 生肖性格
 		const {sr,sx,xz}=this.parse(this.B.U[uid].jrys.split('/').map(_=>parseInt(_.trim())))
 		const url=`https://m.smxs.com/shengxiao/wenhua/${sx[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		if(!$)return
 		$('.xiaoxi_item').each((i,e)=>o.push(`<b>${$(e).text().trim()}</b>`))
-		o=[`🍀 您的生日为：${sr}\n\n生肖为：${sx[2]+' '+sx[1]}\n`,o.join(`\t\t\t`)]
+		o=[`🍀 您的生日为：${sr}  生肖为：${sx[2]+' '+sx[1]}\n`,o.join(`\n`)]
 		$('.yydesc').each((i,e)=>{
 			const v=$(e).text().trim(),t=i<1?'':(i==1?`<b>性格优点：</b>`:`<b>性格缺点：</b>`)
 			o.push(`\n${t}<em>${v}</em>`)
 		})
 		await this.B.edit_text(id,mid,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.`},
-				{text:sx[2]+' 运势',callback_data:`jrys_sxys.`},
-				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.`},
-				{text:xz[2]+' 运势',callback_data:`jrys_xzys.`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${uid}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${uid}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${uid}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${uid}`}
 			]],resize_keyboard:true
 		})
 	}
-	async sxys(id,mid){ // 生肖运势
+	async sxys(id,mid,uid){ // 生肖运势
 		const {sr,sx,xz}=this.parse(this.B.U[uid].jrys.split('/').map(_=>parseInt(_.trim())))
 		const url=`https://m.smxs.com/shengxiaoriyun/${sx[0]}`
 		let o=[],$=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		if(!$)return
 		$('.hlinfoitem').each((i,e)=>o.push($(e).text().trim()))
-		o=[`🍀 您的生日为：${sr}\n\n生肖为：${sx[2]+' '+sx[1]}\n`,o.join(`\n`)]
+		o=[`🍀 您的生日为：${sr}  生肖为：${sx[2]+' '+sx[1]}\n`,o.join(`\n`)]
 		$('.sxysbox').each((i,e)=>{
 			const $e=$(e),t=$e.find('.ystit').text().trim(),v=$e.find('.ysdesc').text().trim()
 			o.push(`\n<b>${t}：</b><em>${v}</em>`)
 		})
 		await this.B.edit_text(id,mid,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.`},
-				{text:sx[2]+' 运势',callback_data:`jrys_sxys.`},
-				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.`},
-				{text:xz[2]+' 运势',callback_data:`jrys_xzys.`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${uid}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${uid}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${uid}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${uid}`}
 			]],resize_keyboard:true
 		})
 	}
-	async xzjj(id,mid){ // 星座简介
+	async xzjj(id,mid,uid){ // 星座简介
 		const {sr,sx,xz}=this.parse(this.B.U[uid].jrys.split('/').map(_=>parseInt(_.trim())))
 		const url=`https://m.smxs.com/xingzuo/${xz[0]}.html`
 		const $=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		if(!$)return
-		const o=[`🍀 您的生日为：${sr}\n\n星座为：${xz[2]+' '+xz[1]}\n`]
+		const o=[`🍀 您的生日为：${sr}  星座为：${xz[2]+' '+xz[1]}\n`]
 		$('.subs').each((i,e)=>{
 			const $e=$(e),t=$e.find('.subs_title'+(i==0?'>small':'')).text().trim()
 			let v=$e.find('.subs_main').text().trim()
@@ -122,19 +122,19 @@ class YS{
 		if(o.length<1)return
 		await this.B.edit_text(id,mid,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.`},
-				{text:sx[2]+' 运势',callback_data:`jrys_sxys.`},
-				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.`},
-				{text:xz[2]+' 运势',callback_data:`jrys_xzys.`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${uid}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${uid}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${uid}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${uid}`}
 			]],resize_keyboard:true
 		})
 	}
-	async xzys(id,mid){ // 星座运势
+	async xzys(id,mid,uid){ // 星座运势
 		const {sr,sx,xz}=this.parse(this.B.U[uid].jrys.split('/').map(_=>parseInt(_.trim())))
 		const url=`https://m.smxs.com/xingzuoriyun/${xz[0]}`
 		const $=await this.R.get(url,{timeout:15000}).then(_=>this.C.load(_.data)).catch(_=>null)
 		if(!$)return
-		const o=[`🍀 您的生日为：${sr}\n\n星座为：${xz[2]+' '+xz[1]}\n`]
+		const o=[`🍀 您的生日为：${sr}  星座为：${xz[2]+' '+xz[1]}\n`]
 		o.push(`<b>${$('.xzlantit').text().trim()}</b>`)
 		o.push(`<b>幸运颜色：</b>${$('.xzcldesc').text().trim()}`)
 		o.push(`<b>速配星座：</b>${$('.xzspdesc').text().trim()}`)
@@ -145,10 +145,10 @@ class YS{
 		})
 		await this.B.edit_text(id,mid,o.join(`\n`),{
 			inline_keyboard:[[
-				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.`},
-				{text:sx[2]+' 运势',callback_data:`jrys_sxys.`},
-				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.`},
-				{text:xz[2]+' 运势',callback_data:`jrys_xzys.`}
+				{text:sx[2]+' 性格',callback_data:`jrys_sxxg.${uid}`},
+				{text:sx[2]+' 运势',callback_data:`jrys_sxys.${uid}`},
+				{text:xz[2]+' 简介',callback_data:`jrys_xzjj.${uid}`},
+				{text:xz[2]+' 运势',callback_data:`jrys_xzys.${uid}`}
 			]],resize_keyboard:true
 		})
 	}
